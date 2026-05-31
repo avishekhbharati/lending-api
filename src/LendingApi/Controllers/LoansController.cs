@@ -1,7 +1,6 @@
-using LendingApi.Data;
 using LendingApi.Models;
+using LendingApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace LendingApi.Controllers;
 
@@ -9,47 +8,31 @@ namespace LendingApi.Controllers;
 [Route("loans")]
 public class LoansController : ControllerBase
 {
-    private readonly LendingDbContext _db;
+    private readonly ILoanService _loanService;
 
-    public LoansController(LendingDbContext db)
+    public LoansController(ILoanService loanService)
     {
-        _db = db;
+        _loanService = loanService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<LoanApplication>>> GetLoans()
     {
-        var loans = await _db.LoanApplications.ToListAsync();
+        var loans = await _loanService.GetAllAsync();
         return Ok(loans);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<LoanApplication>> CreateLoan(CreateLoanRequest request)
-    {
-        var loan = new LoanApplication
-        {
-            Id = Guid.NewGuid(),
-            ApplicantName = request.ApplicantName,
-            Amount = request.Amount,
-            TermMonths = request.TermMonths,
-            Status = LoanStatus.Draft,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _db.LoanApplications.Add(loan);
-        await _db.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetLoanById), new {id =loan.Id}, loan);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<LoanApplication>> GetLoanById(Guid id)
     {
-        var loan = await _db.LoanApplications.FindAsync(id);
-        if (loan is null)
-        {
-            return NotFound();
-        }
-        return Ok(loan);
+        var loan = await _loanService.GetByIdAsync(id);
+        return loan is null ? NotFound() : Ok(loan);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<LoanApplication>> CreateLoan(CreateLoanRequest request)
+    {
+        var loan = await _loanService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetLoanById), new { id = loan.Id }, loan);
     }
 }

@@ -1,6 +1,7 @@
 using LendingApi.Models;
 using LendingApi.Data;
 using Microsoft.EntityFrameworkCore;
+using LendingApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<LendingDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("LendingDb")));
-        
+builder.Services.AddScoped<ILoanService, LoanService>();
+
 builder.Services.AddControllers();
 var app = builder.Build();
 
