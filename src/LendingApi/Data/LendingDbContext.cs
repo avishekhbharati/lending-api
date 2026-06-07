@@ -16,7 +16,24 @@ public class LendingDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<LoanApplication>().HasData(
+        var loan = modelBuilder.Entity<LoanApplication>();
+
+        // 1. Bound the applicant name length (no more nvarchar(max))
+        loan.Property(l => l.ApplicantName)
+            .HasMaxLength(200)
+            .IsRequired();
+
+        // 2. Configure decimal precision explicitly
+        loan.Property(l => l.Amount)
+            .HasPrecision(18, 2);
+
+        // 3. Store the enum as a string, not an int
+        loan.Property(l => l.Status)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
+        // Seed data
+        loan.HasData(
             new LoanApplication
             {
                 Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
@@ -24,7 +41,7 @@ public class LendingDbContext : DbContext
                 Amount = 25000m,
                 TermMonths = 36,
                 Status = LoanStatus.Draft,
-                CreatedAt = new DateTime(2026, 1, 15, 0, 0, 0, DateTimeKind.Utc)
+                CreatedAt = new DateTimeOffset(2026, 1, 15, 0, 0, 0, TimeSpan.Zero)
             },
             new LoanApplication
             {
@@ -33,7 +50,7 @@ public class LendingDbContext : DbContext
                 Amount = 50000m,
                 TermMonths = 60,
                 Status = LoanStatus.Submitted,
-                CreatedAt = new DateTime(2026, 1, 20, 0, 0, 0, DateTimeKind.Utc)
+                CreatedAt = new DateTimeOffset(2026, 1, 20, 0, 0, 0, TimeSpan.Zero)
             },
             new LoanApplication
             {
@@ -42,7 +59,7 @@ public class LendingDbContext : DbContext
                 Amount = 10000m,
                 TermMonths = 12,
                 Status = LoanStatus.Approved,
-                CreatedAt = new DateTime(2026, 2, 1, 0, 0, 0, DateTimeKind.Utc)
+                CreatedAt = new DateTimeOffset(2026, 2, 1, 0, 0, 0, TimeSpan.Zero)
             }
         );
     }

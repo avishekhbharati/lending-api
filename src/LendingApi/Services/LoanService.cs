@@ -13,9 +13,17 @@ public class LoanService : ILoanService
         _db = db;
     }
 
-    public async Task<IEnumerable<LoanApplication>> GetAllAsync()
+    public async Task<PagedResult<LoanApplication>> GetAllAsync(int page, int pageSize)
     {
-        return await _db.LoanApplications.ToListAsync();
+        var query = _db.LoanApplications.AsQueryable();
+        var totalCount = await query.CountAsync();  
+
+        var items = await query
+        .OrderBy(l => l.CreatedAt)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+        return new PagedResult<LoanApplication>(items, page, pageSize, totalCount);
     }
 
     public async Task<LoanApplication?> GetByIdAsync(Guid id)
@@ -32,7 +40,7 @@ public class LoanService : ILoanService
             Amount = request.Amount,
             TermMonths = request.TermMonths,
             Status = LoanStatus.Draft,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
         _db.LoanApplications.Add(loan);

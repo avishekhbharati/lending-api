@@ -16,10 +16,15 @@ public class LoansController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<LoanApplication>>> GetLoans()
+    public async Task<ActionResult<PagedResult<LoanApplication>>> GetLoans(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
     {
-        var loans = await _loanService.GetAllAsync();
-        return Ok(loans);
+        if (page < 1) page = 1;
+        if (pageSize < 1 || pageSize > 100) pageSize = 20;
+
+        var result = await _loanService.GetAllAsync(page, pageSize);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

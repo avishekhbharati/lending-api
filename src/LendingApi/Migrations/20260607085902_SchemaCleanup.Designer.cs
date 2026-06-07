@@ -4,6 +4,7 @@ using LendingApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LendingApi.Migrations
 {
     [DbContext(typeof(LendingDbContext))]
-    partial class LendingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260607085902_SchemaCleanup")]
+    partial class SchemaCleanup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,8 +40,8 @@ namespace LendingApi.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -58,7 +61,7 @@ namespace LendingApi.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             Amount = 25000m,
                             ApplicantName = "Avi Bharati",
-                            CreatedAt = new DateTimeOffset(new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Draft",
                             TermMonths = 36
                         },
@@ -67,7 +70,7 @@ namespace LendingApi.Migrations
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
                             Amount = 50000m,
                             ApplicantName = "Jane Doe",
-                            CreatedAt = new DateTimeOffset(new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Submitted",
                             TermMonths = 60
                         },
@@ -76,7 +79,7 @@ namespace LendingApi.Migrations
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
                             Amount = 10000m,
                             ApplicantName = "Sandip Pandey",
-                            CreatedAt = new DateTimeOffset(new DateTime(2026, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTime(2026, 2, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Approved",
                             TermMonths = 12
                         });

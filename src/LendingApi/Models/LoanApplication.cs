@@ -6,5 +6,5 @@ public class LoanApplication
     public decimal Amount { get; set; }
     public int TermMonths { get; set; }
     public LoanStatus Status { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }
