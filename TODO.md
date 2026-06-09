@@ -89,13 +89,13 @@ Learning checkpoints (all answered, ready for README):
 ### Week 3 — Business logic, validation, state machine, logging
 
 Schema cleanup (deferred from Week 2 — knock out first):
-- [ ] Add [MaxLength(200)] to ApplicantName (no more nvarchar(max))
-- [ ] Configure decimal precision explicitly with HasPrecision(18, 2) in OnModelCreating
+- [x] Add [MaxLength(200)] to ApplicantName (no more nvarchar(max))
+- [x] Configure decimal precision explicitly with HasPrecision(18, 2) in OnModelCreating
   (silences the EF Core startup warning)
-- [ ] Convert LoanStatus storage from int to string via HasConversion<string>()
+- [x] Convert LoanStatus storage from int to string via HasConversion<string>()
   → write the data migration BY HAND (don't auto-generate the int→string mapping)
-- [ ] Evaluate DateTime → DateTimeOffset for CreatedAt
-- [ ] Generate cleanup migration, READ it before applying, apply
+- [x] Evaluate DateTime → DateTimeOffset for CreatedAt
+- [x] Generate cleanup migration, READ it before applying, apply
 
 Validation:
 - [ ] Add validation attributes to CreateLoanRequest

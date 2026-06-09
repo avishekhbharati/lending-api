@@ -1,6 +1,7 @@
 using LendingApi.Models;
 using LendingApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using LendingApi.Common;
 
 namespace LendingApi.Controllers;
 
@@ -39,5 +40,40 @@ public class LoansController : ControllerBase
     {
         var loan = await _loanService.CreateAsync(request);
         return CreatedAtAction(nameof(GetLoanById), new { id = loan.Id }, loan);
+    }
+
+    [HttpPost("{id}/submit")]
+    public async Task<ActionResult<LoanApplication>> Submit(Guid id)
+    {
+        var result = await _loanService.SubmitAsync(id);
+        return MapToActionResult(result);
+    }
+
+    [HttpPost("{id}/approve")]
+    public async Task<ActionResult<LoanApplication>> Approve(Guid id)
+    {
+        var result = await _loanService.ApproveAsync(id);
+        return MapToActionResult(result);
+    }
+
+    [HttpPost("{id}/reject")]
+    public async Task<ActionResult<LoanApplication>> Reject(Guid id)
+    {
+        var result = await _loanService.RejectAsync(id);
+        return MapToActionResult(result);
+    }
+
+    private ActionResult<LoanApplication> MapToActionResult(Result<LoanApplication> result)
+    {
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return result.Error switch
+        {
+            ResultError.NotFound => NotFound(new { error = result.ErrorMessage }),
+            ResultError.Conflict => Conflict(new { error = result.ErrorMessage }),
+            ResultError.Validation => UnprocessableEntity(new { error = result.ErrorMessage }),
+            _ => StatusCode(500, new { error = "Unknown error" })
+        };
     }
 }
