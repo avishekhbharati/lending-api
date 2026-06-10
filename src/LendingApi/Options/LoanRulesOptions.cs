@@ -8,4 +8,6 @@ public class LoanRulesOptions
     public decimal MaxAmount { get; set; } = 1_000_000;
     public int MinTermMonths { get; set; } = 1;
     public int MaxTermMonths { get; set; } = 360;
+    public decimal AnnualInterestRate { get; set; } = 0.075m;
+
 }

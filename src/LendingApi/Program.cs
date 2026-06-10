@@ -3,6 +3,7 @@ using LendingApi.Data;
 using Microsoft.EntityFrameworkCore;
 using LendingApi.Services;
 using LendingApi.Options;
+using LendingApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,10 @@ builder.Services.AddControllers()
     });
 
 var app = builder.Build();
+
+// Timing middleware FIRST so it wraps everything else
+app.UseMiddleware<RequestTimingMiddleware>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

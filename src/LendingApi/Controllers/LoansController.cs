@@ -63,6 +63,22 @@ public class LoansController : ControllerBase
         return MapToActionResult(result);
     }
 
+    [HttpGet("{id}/repayment")]
+    public async Task<ActionResult<RepaymentEstimate>> GetRepayment(Guid id)
+    {
+        var result = await _loanService.CalculateRepaymentAsync(id);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return result.Error switch
+        {
+            ResultError.NotFound => NotFound(new { error = result.ErrorMessage }),
+            ResultError.Conflict => Conflict(new { error = result.ErrorMessage }),
+            _ => StatusCode(500, new { error = "Unknown error" })
+        };
+    }
+
     private ActionResult<LoanApplication> MapToActionResult(Result<LoanApplication> result)
     {
         if (result.IsSuccess)
